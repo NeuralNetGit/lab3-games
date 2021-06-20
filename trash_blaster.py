@@ -239,8 +239,8 @@ class Specimen:
         """
         self.NINPUTS = 25
         self.NOUTPUTS = 5
-        self.NINTER = 1
-        self.INTERSIZE = 15
+        self.NINTER = 2
+        self.INTERSIZE = 5
 
         self.inputLayer = np.zeros((self.NINPUTS, self.INTERSIZE))
         self.interLayers = np.zeros((self.INTERSIZE, self.INTERSIZE, self.NINTER))
@@ -658,14 +658,14 @@ if __name__ == "__main__":
     args = sys.argv[1:]
 
     gen_size = 200
-    saveBest = False
-    saveFile = "brain.txt"
-    loadFile = ""
-    doDisplay = True
+    saveBest = True
+    saveFile = "brain2x5.txt"
+    loadFile = ""#"brain.txt"
+    doDisplay = False #True
     displayMod = 1
-    nThreads = 4
+    nThreads = 12
 
-    mode = ""
+    mode = "learn"
 
     while len(args):
         arg = args.pop(0)
@@ -762,7 +762,7 @@ if __name__ == "__main__":
                     specimen_score_map[generation[i]] = scores[i]
 
                 # Find the mean-average of the scores of all specimen
-                average_of_all = sum(specimen_score_map.values()) / gen_size
+                average_of_all = round(sum(specimen_score_map.values()) / gen_size)
 
                 # Sort the specimen by their score and keep only the top half.
                 generation = sorted(specimen_score_map, key=lambda k: specimen_score_map[k], reverse=True)[
@@ -770,13 +770,15 @@ if __name__ == "__main__":
 
                 # Find the mean-average of the scores of all reproducers (i.e., the top half of
                 # all specimen)
-                average_of_reproducers = sum(sorted(specimen_score_map.values(), reverse=True)[0:half_size]) / half_size
+                average_of_reproducers = round(sum(sorted(specimen_score_map.values(), reverse=True)[0:half_size]) / half_size)
 
                 # Print the statistics
-                print('ITERATION {}'.format(iteration))
-                print('\tAverage score of all specimen: {}'.format(average_of_all))
-                print('\tAverage score of reproducers: {}'.format(average_of_reproducers))
-                print('\tScore of the video-specimen: {}'.format(example_score))
+                if iteration % 100 == 1:
+                    print('ITERATION {}'.format(iteration))
+                    print('\tAverage score of all specimen: {}'.format(average_of_all))
+                    print('\tAverage score of reproducers: {}'.format(average_of_reproducers))
+                   # print(time)
+                    # print('\tScore of the video-specimen: {}'.format(example_score))
 
         except KeyboardInterrupt:
             exit()
